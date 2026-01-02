@@ -1,0 +1,29 @@
+src/
+└── app/
+    └── dashboard/
+        ├── admin/
+        │   ├── layout.tsx           (admin layout — sidebar, navbar, etc.)
+        │   ├── page.tsx             (main admin dashboard)
+        │   │
+        │   ├── users/
+        │   │   ├── page.tsx         (list of users)
+        │   │   ├── new/
+        │   │   │   └── page.tsx     (add new user form)
+        │   │   └── [id]/
+        │   │       └── page.tsx     (edit/view specific user)
+        │   │
+        │   ├── products/
+        │   │   ├── page.tsx
+        │   │   ├── new/page.tsx
+        │   │   └── [id]/page.tsx
+        │   │
+        │   ├── categories/
+        │   │   ├── page.tsx
+        │   │   ├── new/page.tsx
+        │   │   └── [id]/page.tsx
+        │   │
+        │   └── orders/
+        │       ├── page.tsx
+        │       └── [id]/page.tsx
+        │
+        └── page.tsx                  (main user dashboard — non-admin)
