@@ -29,7 +29,7 @@ const Hero = () => {
         
         {/* Main Title */}
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight drop-shadow-xl mb-4 uppercase">
-          Hari Om Electronics
+          HariOm Shop
         </h1>
 
         {/* Subtitle / Description */}

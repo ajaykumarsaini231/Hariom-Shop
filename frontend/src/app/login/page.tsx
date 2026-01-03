@@ -98,21 +98,7 @@ const SignInPage: React.FC = () => {
   return (
     <>
       {/*  Hero Section */}
-      <section
-        className="w-full h-[50vh] flex flex-col items-center justify-center text-center text-white bg-cover bg-center"
-        style={{
-          backgroundImage: `linear-gradient(rgba(20, 20, 30, 0.5), rgba(20, 20, 30, 0.5)), url(/banner/bannerwe.jpg)`,
-        }}
-      >
-        <div className="max-w-4xl px-4">
-          <h2 className="text-4xl md:text-6xl font-bold mb-4 drop-shadow-md">
-            #LoginNow
-          </h2>
-          <p className="text-lg md:text-xl drop-shadow-md">
-            Log in to explore more, shop more, and enjoy more
-          </p>
-        </div>
-      </section>
+      
 
       {/*  Login Form */}
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">

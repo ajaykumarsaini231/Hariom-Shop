@@ -70,49 +70,74 @@ exports.signup = async (req, res) => {
 
     // Send plain OTP via email
     await transport.sendMail({
-      from: process.env.NODE_CODE_SENDING_EMAIL_ADDRESS,
-      to: email,
-      subject: "Your Verification Code – Dreamora ✨",
-      html: `
-    <div style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f3f4f6; padding: 30px; text-align: center;">
-      <div style="background: #ffffff; border-radius: 14px; padding: 30px; max-width: 480px; margin: auto; box-shadow: 0 4px 14px rgba(0,0,0,0.08);">
-        
-        <!-- Logo / Name -->
-        <h1 style="color: #7c3aed; font-size: 26px; margin-bottom: 5px;">Dreamora</h1>
-        <p style="color: #6b7280; font-size: 14px; margin-bottom: 20px;">
-          Where dreams meet discovery ✨
+  from: process.env.NODE_CODE_SENDING_EMAIL_ADDRESS,
+  to: email,
+  subject: `Verify your identity - Ajay Kumar Saini`,
+html: `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verification Code</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f1f5f9; color: #334155;">
+  
+  <div style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+    
+    <div style="height: 6px; background: linear-gradient(to right, #4f46e5, #9333ea); width: 100%;"></div>
+
+    <div style="padding: 40px;">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="margin: 0; font-size: 24px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px;">
+          Ajay Kumar Saini
+        </h1>
+        <p style="margin: 4px 0 0; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: #64748b;">
+          Development & Design
+        </p>
+      </div>
+
+      <div style="text-align: center;">
+        <h2 style="margin: 0 0 16px; font-size: 20px; font-weight: 600; color: #1e293b;">
+          Verify Your Email Address
+        </h2>
+        <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.6; color: #475569;">
+          You requested a secure verification code to sign in. Please enter the code below to continue.
         </p>
 
-        <!-- Title -->
-        <h2 style="color: #111827; font-size: 20px; margin-bottom: 10px;">Email Verification Code</h2>
-        <p style="color: #374151; font-size: 15px;">
-          Hello there 👋,<br>
-          Please use the code below to verify your <strong>Dreamora</strong> account.
-        </p>
-
-        <!-- Code Box -->
-        <div style="margin: 30px 0;">
-          <span style="display: inline-block; font-size: 26px; font-weight: bold; color: #111827; letter-spacing: 6px; background: #ede9fe; padding: 14px 28px; border-radius: 8px;">
-            ${otp}
-          </span>
+        <div style="margin: 32px 0;">
+          <div style="display: inline-block; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 32px; text-align: center;">
+            <span style="font-family: 'Courier New', Courier, monospace; font-size: 36px; font-weight: 700; color: #4f46e5; letter-spacing: 8px; display: block;">
+              ${otp}
+            </span>
+          </div>
         </div>
 
-        <!-- Footer Note -->
-        <p style="font-size: 14px; color: #6b7280;">
-          This code will expire in <strong>10 minutes</strong>.<br>
-          If you didn’t request this, please ignore this email.
+        <p style="margin: 0; font-size: 14px; color: #64748b;">
+          This code will expire in <strong>10 minutes</strong>.
         </p>
-
-        <hr style="margin: 25px 0; border: none; border-top: 1px solid #e5e7eb;" />
-
-        <p style="font-size: 12px; color: #9ca3af;">
-          © ${new Date().getFullYear()} Dreamora — Dream. Discover. Delight.<br />
-          <a href="https://client-delta-brown.vercel.app" style="color:#7c3aed; text-decoration:none;">dreamora.com</a>
+        <p style="margin-top: 8px; font-size: 13px; color: #94a3b8;">
+          If you did not request this, please ignore this email.
         </p>
       </div>
     </div>
-  `,
-    });
+
+    <div style="background-color: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #e2e8f0;">
+      <p style="margin: 0; font-size: 12px; color: #94a3b8; line-height: 1.5;">
+        &copy; ${new Date().getFullYear()} Ajay Kumar Saini. All rights reserved.<br>
+        Jaipur, Rajasthan, India
+      </p>
+      <div style="margin-top: 12px;">
+        <a href="${process.env.NEXT_PUBLIC_URL}" style="color: #64748b; text-decoration: none; font-size: 12px; margin: 0 8px;">Website</a>
+        <a href="mailto:nabalsaini231@gmail.com" style="color: #64748b; text-decoration: none; font-size: 12px; margin: 0 8px;">Contact Support</a>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
+`,
+});
 
     res.status(201).json({
       success: true,
@@ -247,33 +272,71 @@ exports.resendSignupOtp = async (req, res) => {
     await transport.sendMail({
       from: process.env.NODE_CODE_SENDING_EMAIL_ADDRESS,
       to: email,
-      subject: "New Verification Code – Dreamora ✨",
-      html: `
-      <div style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f3f4f6; padding: 30px; text-align: center;">
-        <div style="background: #ffffff; border-radius: 14px; padding: 30px; max-width: 480px; margin: auto; box-shadow: 0 4px 14px rgba(0,0,0,0.08);">
-          <h1 style="color: #7c3aed; font-size: 26px; margin-bottom: 5px;">Dreamora</h1>
-          <p style="color: #6b7280; font-size: 14px; margin-bottom: 20px;">
-            Where dreams meet discovery ✨
-          </p>
-          <h2 style="color: #111827; font-size: 20px; margin-bottom: 10px;">Your New Verification Code</h2>
-          <p style="color: #374151; font-size: 15px;">
-            Here’s your new verification code for Dreamora:
-          </p>
-          <div style="margin: 30px 0;">
-            <span style="display: inline-block; font-size: 26px; font-weight: bold; color: #111827; letter-spacing: 6px; background: #ede9fe; padding: 14px 28px; border-radius: 8px;">
-              ${newOtp}
+     subject: `Verify your identity - Ajay Kumar Saini`,
+html: `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verification Code</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f1f5f9; color: #334155;">
+  
+  <div style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
+    
+    <div style="height: 6px; background: linear-gradient(to right, #4f46e5, #9333ea); width: 100%;"></div>
+
+    <div style="padding: 40px;">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="margin: 0; font-size: 24px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px;">
+          Ajay Kumar Saini
+        </h1>
+        <p style="margin: 4px 0 0; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: #64748b;">
+          Development & Design
+        </p>
+      </div>
+
+      <div style="text-align: center;">
+        <h2 style="margin: 0 0 16px; font-size: 20px; font-weight: 600; color: #1e293b;">
+          Verify Your Email Address
+        </h2>
+        <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.6; color: #475569;">
+          You requested a secure verification code to sign in. Please enter the code below to continue.
+        </p>
+
+        <div style="margin: 32px 0;">
+          <div style="display: inline-block; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 32px; text-align: center;">
+            <span style="font-family: 'Courier New', Courier, monospace; font-size: 36px; font-weight: 700; color: #4f46e5; letter-spacing: 8px; display: block;">
+              ${otp}
             </span>
           </div>
-          <p style="font-size: 14px; color: #6b7280;">
-            This code will expire in <strong>5 minutes</strong>.
-          </p>
-          <hr style="margin: 25px 0; border: none; border-top: 1px solid #e5e7eb;" />
-          <p style="font-size: 12px; color: #9ca3af;">
-            © ${new Date().getFullYear()} Dreamora — Dream. Discover. Delight.
-          </p>
         </div>
+
+        <p style="margin: 0; font-size: 14px; color: #64748b;">
+          This code will expire in <strong>10 minutes</strong>.
+        </p>
+        <p style="margin-top: 8px; font-size: 13px; color: #94a3b8;">
+          If you did not request this, please ignore this email.
+        </p>
       </div>
-    `,
+    </div>
+
+    <div style="background-color: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #e2e8f0;">
+      <p style="margin: 0; font-size: 12px; color: #94a3b8; line-height: 1.5;">
+        &copy; ${new Date().getFullYear()} Ajay Kumar Saini. All rights reserved.<br>
+        Jaipur, Rajasthan, India
+      </p>
+      <div style="margin-top: 12px;">
+        <a href="${process.env.NEXT_PUBLIC_URL}" style="color: #64748b; text-decoration: none; font-size: 12px; margin: 0 8px;">Website</a>
+        <a href="mailto:nabalsaini231@gmail.com" style="color: #64748b; text-decoration: none; font-size: 12px; margin: 0 8px;">Contact Support</a>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
+`,
     });
 
     res.status(200).json({

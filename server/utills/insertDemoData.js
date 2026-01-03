@@ -9,26 +9,27 @@ async function main() {
 
   // 1. CLEANUP EXISTING DATA
   console.log("🧹 Cleaning up the database...");
-  // Delete in order of dependencies (Child -> Parent)
   await prisma.wishlist.deleteMany();
-  await prisma.cart.deleteMany();
+  await prisma.cart.deleteMany(); // Added Cart cleanup
   await prisma.customer_order_product.deleteMany();
   await prisma.customer_order.deleteMany();
   await prisma.image.deleteMany();
   await prisma.product.deleteMany();
-  await prisma.address.deleteMany();
   await prisma.category.deleteMany();
+  await prisma.address.deleteMany(); // Added Address cleanup
   await prisma.user.deleteMany();
   console.log("✅ Database cleaned.");
 
   // 2. SEED CATEGORIES
   console.log("🌱 Seeding categories...");
   const demoCategoriesData = [
-    { name: "Laptops" }, // Added specifically for your products
-    // { name: "Smartphones" },
-    // { name: "Accessories" },
-    // { name: "Gaming Consoles" },
-    // { name: "Headphones" },
+    { name: "Laptops" }, // Added for your new products
+    { name: "Electronics" },
+    { name: "Animated 3D Posters" },
+    { name: "Anime Metal Posters" },
+    { name: "Key Chains" },
+    { name: "Super Hero Collection" },
+    { name: "Video Game Posters" },
   ];
   
   await prisma.category.createMany({ data: demoCategoriesData });
@@ -36,7 +37,10 @@ async function main() {
   console.log(`✅ ${createdCategories.length} categories seeded.`);
 
   // Helper to find category ID
-  const laptopCategory = createdCategories.find(c => c.name === "Laptops");
+  const getCategoryId = (name) => {
+    const cat = createdCategories.find((c) => c.name === name);
+    return cat ? cat.id : createdCategories[0].id;
+  };
 
   // 3. SEED USERS
   console.log("🌱 Seeding users...");
@@ -53,169 +57,126 @@ async function main() {
         email: userData.email,
         password: hashedPassword,
         role: userData.role,
+        verified: true, // Auto-verify for demo
         name: userData.email.split("@")[0],
-        verified: true,
       },
     });
     createdUsers.push(user);
     console.log(`✅ User seeded: ${user.email}`);
   }
 
-  // 4. SEED PRODUCTS & IMAGES
-  console.log("🌱 Seeding products and images...");
+  // 4. SEED PRODUCTS (Specific Logic for your Images)
+  console.log("🌱 Seeding specific products...");
 
   // Base URL for your images
-  const githubBaseUrl = "https://raw.githubusercontent.com/ajaykumarsaini231/server/refs/heads/main/public/";
+  const githubBase = "https://raw.githubusercontent.com/ajaykumarsaini231/Hariom-Shop/refs/heads/main/server/public/assest/";
 
-  // DATA DEFINITION BASED ON YOUR REQUEST
-  const productSeeds = [
+  // --- Product 1: The specific list you asked for ---
+  const product1Images = ["4_1.jpeg", "7.jpeg", "10.jpeg", "11.jpeg", "12.jpeg"];
+  
+  // --- Product 2: The "Other" images ---
+  const product2Images = ["1.jpeg", "2.jpeg", "3.jpeg", "5.jpeg", "6.jpeg", "8.jpeg", "9.jpeg", "13.jpeg", "14.jpeg"];
+
+  // Define the 2 Products
+  const productsToCreate = [
     {
-      title: "HP Envy x360 Convertible 15-es0000", // Product 1
+      title: "HP EliteBook x360 G8 | i7 11th Gen",
+      description: "Premium convertible business laptop with touch screen and high performance.",
+      price: 45999,
       manufacturer: "HP",
-      price: 85000,
-      description: "Experience the power and versatility of the HP Envy x360. Featuring a 360-degree hinge, vivid display, and high-performance processor.",
-      imageFiles: ["4_1.jpeg", "7.jpeg", "10.jpeg", "11.jpeg", "12.jpeg"]
+      images: product1Images,
     },
     {
-      title: "Dell Latitude 5420 Business Laptop", // Product 2 (The Rest)
+      title: "Dell Latitude 7420 | i5 11th Gen",
+      description: "Durable and powerful laptop perfect for professionals and students.",
+      price: 32500,
       manufacturer: "Dell",
-      price: 52000,
-      description: "Work confidently with this durable 14-inch business laptop. Features advanced security, long battery life, and powerful performance.",
-      imageFiles: ["1.jpeg", "2.jpeg", "3.jpeg", "5.jpeg", "6.jpeg", "8.jpeg", "9.jpeg", "13.jpeg", "14.jpeg"]
-    }
+      images: product2Images,
+    },
   ];
 
   const allProducts = [];
 
-  for (const p of productSeeds) {
-    if (!laptopCategory) {
-        console.error("❌ Category 'Laptops' not found. Skipping product.");
-        continue;
-    }
-
-    // 1. Prepare Main Image URL (Use the first image in the list)
-    const mainImageUrl = `${githubBaseUrl}${p.imageFiles[0]}`;
-
-    // 2. Prepare Array for Image Relation (All images including main)
-    const imageRelationData = p.imageFiles.map(fileName => ({
-        image: `${githubBaseUrl}${fileName}`
-    }));
-
-    // 3. Create Product
+  for (const prodData of productsToCreate) {
+    // Use the first image in the list as the main image
+    const mainImgUrl = `${githubBase}${prodData.images[0]}`;
+    
+    // Create the product
     const product = await prisma.product.create({
       data: {
-        title: p.title,
-        slug: `${p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${uuidv4().slice(0, 6)}`,
-        mainImage: mainImageUrl, // Stores the first image string
-        price: p.price,
-        rating: Math.floor(Math.random() * 2) + 4, // 4 or 5 stars
-        description: p.description,
-        manufacturer: p.manufacturer,
-        inStock: Math.floor(Math.random() * 50) + 10,
-        categoryId: laptopCategory.id,
-        // Insert related images into Image table
+        title: prodData.title,
+        slug: `${prodData.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${uuidv4().slice(0, 6)}`,
+        description: prodData.description,
+        price: prodData.price,
+        rating: 5,
+        inStock: 15,
+        manufacturer: prodData.manufacturer,
+        mainImage: mainImgUrl,
+        categoryId: getCategoryId("Laptops"),
+        
+        // Create related Image records for ALL images in the list
         images: {
-            create: imageRelationData
-        }
+          create: prodData.images.map(imgName => ({
+            image: `${githubBase}${imgName}`,
+          })),
+        },
       },
     });
-    
     allProducts.push(product);
-    console.log(`✅ Product seeded: ${p.title}`);
+    console.log(`✅ Product created: ${prodData.title}`);
   }
 
-
-  // 5. SEED ORDERS
+  // 5. SEED ORDERS (Using the new products)
   console.log("🌱 Seeding customer orders...");
-  if (allProducts.length >= 2 && createdUsers.length > 0) {
-    for (let i = 0; i < 3; i++) {
-      const user = createdUsers[i % createdUsers.length];
-      const product1 = allProducts[0];
-      const product2 = allProducts[1];
-      
-      await prisma.customer_order.create({
-        data: {
-          userId: user.id,
-          name: user.name || "User",
-          lastname: "Demo",
-          phone: "9876543210",
-          email: user.email,
-          company: "Tech Solutions Inc.",
-          adress: "123 Tech Park",
-          apartment: "Suite 404",
-          postalCode: "110020",
-          city: "New Delhi",
-          country: "India",
-          status: ["Pending", "Shipped", "Delivered"][i],
-          orderNotice: "Please deliver between 9 AM - 5 PM",
-          total: product1.price + (product2.price * 2),
-          products: {
-            create: [
-              { productId: product1.id, quantity: 1 },
-              { productId: product2.id, quantity: 2 },
-            ],
-          },
+  if (allProducts.length > 0 && createdUsers.length > 0) {
+    const user = createdUsers[1]; // Use the normal user
+    const product1 = allProducts[0];
+    const product2 = allProducts[1];
+
+    await prisma.customer_order.create({
+      data: {
+        userId: user.id,
+        name: "Ajay",
+        lastname: "Saini",
+        phone: "9876543210",
+        email: user.email,
+        company: "Hari Om Electronics",
+        adress: "Shop No 5, Market Road",
+        apartment: "Near Bus Stand",
+        postalCode: "302001",
+        city: "Jaipur",
+        country: "India",
+        status: "Pending",
+        total: product1.price + product2.price,
+        products: {
+          create: [
+            { productId: product1.id, quantity: 1 },
+            { productId: product2.id, quantity: 1 },
+          ],
         },
-      });
-    }
-    console.log("✅ 3 sample orders seeded.");
+      },
+    });
+    console.log("✅ Sample order seeded.");
   }
 
   // 6. SEED ADDRESSES
   console.log("🌱 Seeding addresses...");
-  if (createdUsers.length > 0) {
-    for (const user of createdUsers) {
-      await prisma.address.createMany({
-        data: [
-          {
-            userId: user.id,
-            name: user.name || "Ajay",
-            lastname: "Saini",
-            address: "H-123, Vasant Vihar",
-            city: "New Delhi",
-            postalCode: "110057",
-            country: "India",
-            phone: "9876543210",
-            isDefault: true,
-          },
-          {
-            userId: user.id,
-            name: user.name || "Ajay",
-            lastname: "Office",
-            address: "Cyber City, DLF Phase 2",
-            city: "Gurugram",
-            postalCode: "122002",
-            country: "India",
-            phone: "9998887776",
-            isDefault: false,
-          },
-        ],
-      });
-      console.log(`✅ Dummy addresses seeded for user: ${user.email}`);
-    }
+  for (const user of createdUsers) {
+    await prisma.address.create({
+      data: {
+        userId: user.id,
+        name: "Ajay",
+        lastname: "Kumar",
+        address: "Hari Om Electronics Store",
+        city: "Jaipur",
+        postalCode: "302012",
+        country: "India",
+        phone: "9876543210",
+        isDefault: true,
+      },
+    });
   }
-
-  // 7. SEED WISHLISTS
-  console.log("🌱 Seeding wishlists...");
-  if (allProducts.length > 0 && createdUsers.length > 0) {
-      const user = createdUsers[0];
-      const product = allProducts[0]; // Add first product to wishlist
-
-      await prisma.wishlist.upsert({
-        where: {
-          userId_productId: {
-            userId: user.id,
-            productId: product.id,
-          },
-        },
-        update: {},
-        create: {
-          userId: user.id,
-          productId: product.id,
-        },
-      });
-    console.log("✅ Sample wishlist items seeded.");
-  }
+  console.log("✅ Addresses seeded.");
 }
 
 main()

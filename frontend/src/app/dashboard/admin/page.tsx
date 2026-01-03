@@ -6,20 +6,20 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
-function SidebarLink({ href, icon, children }: { href: string; icon: React.ReactNode; children: React.ReactNode }) {
-  const router = useRouter();
-  return (
-    <button
-      onClick={() => router.push(href)}
-      className="flex items-center gap-2 p-2 hover:bg-gray-200 rounded-md w-full text-left text-gray-700 font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400"
-    >
-      {icon}
-      {children}
-    </button>
-  );
-}
+// function SidebarLink({ href, icon, children }: { href: string; icon: React.ReactNode; children: React.ReactNode }) {
+//   const router = useRouter();
+//   return (
+//     <button
+//       onClick={() => router.push(href)}
+//       className="flex items-center gap-2 p-2 hover:bg-gray-200 rounded-md w-full text-left text-gray-700 font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400"
+//     >
+//       {icon}
+//       {children}
+//     </button>
+//   );
+// }
 
-export function RecentOrders() {
+function RecentOrders() {
   const [orders, setOrders] = useState<any[]>([]);
   const [sortOrder, setSortOrder] = useState("desc");
   const [loading, setLoading] = useState(true);
@@ -208,7 +208,7 @@ export default function AdminDashboardPage() {
 
 
       {/* Recent Orders Section */}
-      <RecentOrders />
+      {<RecentOrders />}
     </div>
   );
 }

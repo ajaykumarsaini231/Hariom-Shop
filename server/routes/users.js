@@ -30,13 +30,13 @@ router.put("/me", identifier, updateCurrentUser);
 router.delete("/me", identifier, deleteCurrentUser);
 
 
-// // router.get("/",  getAllUsers);
+// router.get("/",  getAllUsers);
 // router.get("/me/:id",  getUser);
 // router.put("/me/:id",  updateUser);
 // router.delete("/me/:id",  deleteUser);
 
 
-//  Admin Routes
+// //  Admin Routes
 router.get("/", adminIdentifier, getAllUsers);
 router.get("/:id", adminIdentifier, getUser);
 router.put("/:id", adminIdentifier, updateUser);

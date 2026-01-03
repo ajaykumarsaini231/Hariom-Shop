@@ -26,6 +26,12 @@ const nextConfig = {
         hostname: "res.cloudinary.com",
         pathname: "/**",
       },
+      // 👇 NEW: Allow Unsplash images (added this)
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "/**",
+      },
     ],
   },
 };
