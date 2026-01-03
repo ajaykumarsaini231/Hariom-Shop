@@ -20,13 +20,13 @@ router.get("/:id", getProductOrder);
  * 🔒 Protected Routes — require JWT
  */
 
-// router.post("/", createOrderProduct);
-// router.put("/:id",  updateProductOrder);
-// router.delete("/:id", deleteProductOrder);
+router.post("/", createOrderProduct);
+router.put("/:id",  updateProductOrder);
+router.delete("/:id", deleteProductOrder);
 
 
-router.post("/", identifier, createOrderProduct);
-router.put("/:id", identifier, updateProductOrder);
-router.delete("/:id", identifier, deleteProductOrder);
+// router.post("/", identifier, createOrderProduct);
+// router.put("/:id", identifier, updateProductOrder);
+// router.delete("/:id", identifier, deleteProductOrder);
 
 module.exports = router;

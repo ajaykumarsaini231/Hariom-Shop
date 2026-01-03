@@ -1,45 +1,56 @@
 {
   "name": "razvoj_veb_aplikacija",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Laptop Shop Backend",
+  "main": "app.js",
   "scripts": {
     "build": "prisma generate",
-    "postinstall": "prisma generate",
     "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "prisma generate",
     "logs": "node view-logs.js",
     "logs:access": "node view-logs.js access",
     "logs:error": "node view-logs.js error",
     "logs:security": "node view-logs.js security",
     "logs:analyze": "node view-logs.js analyze",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
     "migrate:validate": "node scripts/migration-validator.js validate",
     "migrate:backup": "node scripts/migration-validator.js backup",
     "migrate:safe": "node scripts/migration-validator.js safe-migrate",
     "db:backup": "node scripts/backup-database.js",
-    "db:restore": "node scripts/restore-database.js"
+    "db:restore": "node scripts/restore-database.js",
+    "studio": "prisma studio"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "laptop",
+    "shop",
+    "api",
+    "prisma"
+  ],
+  "author": "Ajay",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^5.12.1",
-    "axios": "^1.12.1",
+    "@prisma/client": "^5.13.0",
+    "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "express": "^4.18.3",
-    "express-fileupload": "^1.5.2",
-    "express-rate-limit": "^8.1.0",
-    "joi": "^18.0.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-fileupload": "^1.5.0",
+    "express-rate-limit": "^7.2.0",
+    "joi": "^17.13.1",
     "jsonwebtoken": "^9.0.2",
-    "morgan": "^1.10.1",
-    "mysql": "^2.18.1",
-    "nanoid": "^5.0.6",
-    "nodemailer": "^7.0.6",
-    "prisma": "^5.12.1",
-    "uuid": "^13.0.0"
+    "morgan": "^1.10.0",
+    "mysql2": "^3.9.7",
+    "nanoid": "^5.0.7",
+    "nodemailer": "^6.9.13",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@types/node": "^24.7.0"
+    "@types/node": "^20.12.7",
+    "nodemon": "^3.1.0",
+    "prisma": "^5.13.0"
   }
 }

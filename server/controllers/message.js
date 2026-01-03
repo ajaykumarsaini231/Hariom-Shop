@@ -15,6 +15,7 @@ export const createMessage = async (req, res) => {
       data: {
         name,
         email,
+        phone,
         subject,
         message,
       },

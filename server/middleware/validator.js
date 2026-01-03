@@ -5,17 +5,23 @@ exports.signupSchema = Joi.object({
     name:Joi.string()
     .required(),
 
+    
     email: Joi.string()
         .min(6)
         .max(60)
         .required()
         .email({ tlds: { allow: ['com', 'net','in'] } }),
-
+    mobile: Joi.string().length(10).pattern(/^[0-9]+$/).required().messages({
+    'string.length': 'Mobile number must be exactly 10 digits',
+    'string.pattern.base': 'Mobile number must contain only numbers'
+  }),
     password: Joi.string()
         .required()
         .pattern(new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$"))
        
 });
+
+
 
 exports.signinSchema = Joi.object({
     email: Joi.string()

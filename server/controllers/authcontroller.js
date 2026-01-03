@@ -14,43 +14,46 @@ const { doHash, dohashValidation, hmacProcess } = require("../utills/hashing");
 const { transport } = require("../middleware/sendmail");
 
 // =============== SIGNUP ===============
+
+// =============== SIGNUP ===============
 exports.signup = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, mobile } = req.body;
 
   try {
-    const { error } = signupSchema.validate({ name, email, password });
+    // 1. Validate Input (Including Mobile)
+    const { error } = signupSchema.validate({ name, email, password, mobile });
     if (error)
       return res
         .status(400)
         .json({ success: false, message: error.details[0].message });
 
-    // Check existing user or pending user
+    // 2. Check existing user
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser)
       return res
         .status(400)
         .json({ success: false, message: "User already exists" });
 
+    // 3. Check existing pending user
     const existingPending = await prisma.pendingUser.findUnique({
       where: { email },
     });
+    
     if (existingPending) {
       if (existingPending.otpExpiry < new Date()) {
         await prisma.pendingUser.delete({ where: { email } });
       } else {
         return res.status(400).json({
           success: false,
-          message:
-            "OTP already sent. Please check your email or wait until it expires.",
+          message: "OTP already sent. Please check your email or wait until it expires.",
         });
       }
     }
 
-    // Generate OTP
+    // 4. Generate & Hash OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
+    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 Minutes
 
-    // ✅ HMAC the OTP before saving
     const hashedOtp = hmacProcess(
       otp,
       process.env.HMAC_VARIFICATION_CODE_SECRET
@@ -58,86 +61,47 @@ exports.signup = async (req, res) => {
 
     const hashedPassword = await doHash(password, 12);
 
+    // 5. Create Pending User (NOW SAVING MOBILE)
     await prisma.pendingUser.create({
       data: {
         name,
         email,
+        mobile, // <--- Saving mobile to pending
         password: hashedPassword,
         otp: hashedOtp,
         otpExpiry,
       },
     });
 
-    // Send plain OTP via email
+    // 6. Send OTP Email to User
     await transport.sendMail({
-  from: process.env.NODE_CODE_SENDING_EMAIL_ADDRESS,
-  to: email,
-  subject: `Verify your identity - Ajay Kumar Saini`,
-html: `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verification Code</title>
-</head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f1f5f9; color: #334155;">
-  
-  <div style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">
-    
-    <div style="height: 6px; background: linear-gradient(to right, #4f46e5, #9333ea); width: 100%;"></div>
-
-    <div style="padding: 40px;">
-      <div style="text-align: center; margin-bottom: 30px;">
-        <h1 style="margin: 0; font-size: 24px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px;">
-          Ajay Kumar Saini
-        </h1>
-        <p style="margin: 4px 0 0; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: #64748b;">
-          Development & Design
-        </p>
-      </div>
-
-      <div style="text-align: center;">
-        <h2 style="margin: 0 0 16px; font-size: 20px; font-weight: 600; color: #1e293b;">
-          Verify Your Email Address
-        </h2>
-        <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.6; color: #475569;">
-          You requested a secure verification code to sign in. Please enter the code below to continue.
-        </p>
-
-        <div style="margin: 32px 0;">
-          <div style="display: inline-block; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 32px; text-align: center;">
-            <span style="font-family: 'Courier New', Courier, monospace; font-size: 36px; font-weight: 700; color: #4f46e5; letter-spacing: 8px; display: block;">
-              ${otp}
-            </span>
+      from: process.env.NODE_CODE_SENDING_EMAIL_ADDRESS,
+      to: email,
+      subject: `Verify your identity - Ajay Kumar Saini`,
+      html: `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Verification Code</title></head>
+        <body style="margin: 0; padding: 0; font-family: sans-serif; background-color: #f1f5f9; color: #334155;">
+          <div style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; overflow: hidden;">
+            <div style="height: 6px; background: linear-gradient(to right, #4f46e5, #9333ea); width: 100%;"></div>
+            <div style="padding: 40px; text-align: center;">
+              <h1 style="color: #0f172a;">Ajay Kumar Saini</h1>
+              <h2 style="color: #1e293b;">Verify Your Email Address</h2>
+              <p>Please enter the code below to continue.</p>
+              <div style="margin: 32px 0; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;">
+                <span style="font-family: monospace; font-size: 36px; font-weight: 700; color: #4f46e5; letter-spacing: 8px;">${otp}</span>
+              </div>
+              <p>Expires in 10 minutes.</p>
+            </div>
+            <div style="background-color: #f8fafc; padding: 24px; text-align: center;">
+              <p>&copy; ${new Date().getFullYear()} Ajay Kumar Saini.</p>
+            </div>
           </div>
-        </div>
-
-        <p style="margin: 0; font-size: 14px; color: #64748b;">
-          This code will expire in <strong>10 minutes</strong>.
-        </p>
-        <p style="margin-top: 8px; font-size: 13px; color: #94a3b8;">
-          If you did not request this, please ignore this email.
-        </p>
-      </div>
-    </div>
-
-    <div style="background-color: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #e2e8f0;">
-      <p style="margin: 0; font-size: 12px; color: #94a3b8; line-height: 1.5;">
-        &copy; ${new Date().getFullYear()} Ajay Kumar Saini. All rights reserved.<br>
-        Jaipur, Rajasthan, India
-      </p>
-      <div style="margin-top: 12px;">
-        <a href="${process.env.NEXT_PUBLIC_URL}" style="color: #64748b; text-decoration: none; font-size: 12px; margin: 0 8px;">Website</a>
-        <a href="mailto:nabalsaini231@gmail.com" style="color: #64748b; text-decoration: none; font-size: 12px; margin: 0 8px;">Contact Support</a>
-      </div>
-    </div>
-  </div>
-
-</body>
-</html>
-`,
-});
+        </body>
+        </html>
+      `,
+    });
 
     res.status(201).json({
       success: true,
@@ -167,19 +131,58 @@ exports.verifyOtp = async (req, res) => {
     if (pendingUser.otpExpiry < new Date())
       return res.status(400).json({ success: false, message: "OTP expired" });
 
-    // Move pending user → user table
+    // 1. Move pending user → user table (INCLUDE MOBILE)
     const newUser = await prisma.user.create({
       data: {
         name: pendingUser.name,
         email: pendingUser.email,
+        mobile: pendingUser.mobile, // <--- Transfer mobile from pending to actual user
         password: pendingUser.password,
         verified: true,
       },
     });
 
-    // Delete pending record
+    // 2. Delete pending record
     await prisma.pendingUser.delete({ where: { email } });
 
+    // 3. 📧 SEND ADMIN NOTIFICATION EMAIL (To You)
+    try {
+      await transport.sendMail({
+        from: process.env.NODE_CODE_SENDING_EMAIL_ADDRESS,
+        to: "nabalsaini231@gmail.com", // Your Email ID (Admin)
+        subject: `🚀 New User Registered: ${newUser.name}`,
+        html: `
+          <div style="font-family: sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+            <h2 style="color: #4f46e5;">New User Registration Alert</h2>
+            <p>A new user has successfully verified their account and joined the platform.</p>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+              <tr style="background-color: #f8fafc;">
+                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Name</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${newUser.name}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Email</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${newUser.email}</td>
+              </tr>
+              <tr style="background-color: #f8fafc;">
+                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Mobile</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${newUser.mobile}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Joined At</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${new Date().toLocaleString()}</td>
+              </tr>
+            </table>
+          </div>
+        `
+      });
+      console.log("✅ Admin notification email sent.");
+    } catch (mailError) {
+      console.error("⚠️ Failed to send admin notification:", mailError);
+      // Don't block the login flow if admin email fails
+    }
+
+    // 4. Generate Token & Login User
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (!existingUser) {
       return res.status(401).json({
@@ -187,13 +190,14 @@ exports.verifyOtp = async (req, res) => {
         message: "This user does not singup pls try again later",
       });
     }
-       const token = jwt.sign(
+
+    const token = jwt.sign(
       {
         userId: existingUser.id,
         name: existingUser.name,
         email: existingUser.email,
         verified: existingUser.verified,
-        role: existingUser.role, 
+        role: existingUser.role,
       },
       process.env.Secret_Token,
       { expiresIn: "8h" }
@@ -212,6 +216,7 @@ exports.verifyOtp = async (req, res) => {
         user: {
           name: existingUser.name,
           email: existingUser.email,
+          mobile: existingUser.mobile, // Return mobile in response too
           photoUrl: existingUser.photoUrl || "/default-avatar.png",
         },
         message: "Logged in successfully",
