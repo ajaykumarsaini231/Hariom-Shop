@@ -48,7 +48,17 @@ export const metadata: Metadata = {
     "web developer in Mumbai",
     "web developer in Bangalore",
     "web developer in Hyderabad",
-    "web developer in Chennai",
+    "web developer in Chennai",     "website developer in India", "freelance web developer India", "web design agency India", "hire developer online",
+    // 2. Direct Intent (The "I need it now" crowd)
+    "website development services", "get a website made", "website designer", "build a website for me",
+    // 3. Business & Cost (High Intent)
+    "small business website India", "low cost website design", "affordable web developer", "startup website development",
+    // 4. Hinglish (Crucial for Pan-India reach)
+    "website banwana hai", "website banane wala", "online business website", "website ka price", "shop ke liye website",
+    // 5. Tech Specific
+    "React js developer India", "Next.js website development", "MERN stack developer", "Wordpress expert India",
+    // 6. E-commerce
+    "ecommerce website developer", "online store kaise banaye", "selling website development",
     "web developer in Kolkata",
     "web developer in Pune",
     "web developer in Ahmedabad",

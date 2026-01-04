@@ -261,7 +261,7 @@ const getAllProductsOld = asyncHandler(async (request, response) => {
 
 // Create a new product
 const createProduct = asyncHandler(async (request, response) => {
-    console.log(request.body)
+    // console.log(request.body)
   const {
     slug,
     title,
@@ -274,7 +274,7 @@ const createProduct = asyncHandler(async (request, response) => {
     images, // Array of image URLs from frontend
   } = request.body;
 
-     console.log(request.body.title)
+    //  console.log(request.body.title)
 
 
   // Basic validation

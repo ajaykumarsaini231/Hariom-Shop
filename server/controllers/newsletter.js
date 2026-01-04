@@ -3,6 +3,7 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 const router = express.Router();
+const { adminIdentifier } = require("../middleware/adminIdentifier.js");
 
 // 📩 Subscribe
 router.post("/", async (req, res) => {
@@ -30,7 +31,7 @@ router.post("/", async (req, res) => {
 });
 
 // 📋 Get all subscribers
-router.get("/", async (req, res) => {
+router.get("/", adminIdentifier,  async (req, res) => {
     // res.send({message:"hello friends "})
   try {
     const subscribers = await prisma.newsletter.findMany({

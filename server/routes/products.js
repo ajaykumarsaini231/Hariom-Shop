@@ -30,16 +30,16 @@ router.get("/:id", getProductById);
 /**
  * 🔒 Protected Admin Routes — only admins can create, update, or delete
 //  */
-// router.put("/move-products", adminIdentifier, moveProductsToCategory); // ✅ plural match
-// router.post("/", adminIdentifier, createProduct);
-// router.put("/:id", adminIdentifier, updateProduct);
-// router.delete("/:id", adminIdentifier, deleteProduct);
-// router.get("/split/:categoryId",  getProductsSplitByCategory);
+router.put("/move-products", adminIdentifier, moveProductsToCategory); // ✅ plural match
+router.post("/", adminIdentifier, createProduct);
+router.put("/:id", adminIdentifier, updateProduct);
+router.delete("/:id", adminIdentifier, deleteProduct);
+router.get("/split/:categoryId",  getProductsSplitByCategory);
 
 // router.put("/move-products", moveProductsToCategory); // ✅ plural match
-router.post("/", createProduct);
-router.put("/:id", updateProduct);
-router.delete("/:id", deleteProduct);
-router.get("/split/:categoryId",  getProductsSplitByCategory);
+// router.post("/", createProduct);
+// router.put("/:id", updateProduct);
+// router.delete("/:id", deleteProduct);
+// router.get("/split/:categoryId",  getProductsSplitByCategory);
 
 module.exports = router;

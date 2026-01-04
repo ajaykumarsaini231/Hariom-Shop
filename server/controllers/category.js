@@ -4,7 +4,6 @@ const { asyncHandler, AppError } = require("../utills/errorHandler");
 
 const createCategory = asyncHandler(async (request, response) => {
   const { name } = request.body;
-  console.log(name)
   if (!name || name.trim().length === 0) {
     throw new AppError("Category name is required", 400);
   }

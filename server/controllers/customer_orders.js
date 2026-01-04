@@ -4,8 +4,7 @@ const { validateOrderData, ValidationError } = require('../utills/validation');
 
 async function createCustomerOrder(request, response) {
   try {
-    console.log("=== ORDER CREATION REQUEST ===");
-    console.log("Request body:", JSON.stringify(request.body, null, 2));
+    // console.log("Request body:", JSON.stringify(request.body, null, 2));
     
     // Validate request body
     if (!request.body || typeof request.body !== 'object') {
