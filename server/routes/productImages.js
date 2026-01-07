@@ -26,7 +26,7 @@ router.put('/:id', adminIdentifier, updateImage);
 // Delete image (secured)
 router.delete('/:id', adminIdentifier, deleteImage);
 
-// Get all images for a product
+// // Get all images for a product
 // router.get('/:id', getSingleProductImages);
 
 // // Create new product image (secured)

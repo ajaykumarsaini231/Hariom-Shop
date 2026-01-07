@@ -1,95 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
-const { v4: uuidv4 } = require("uuid");
-const bcrypt = require("bcryptjs");
-
-const prisma = new PrismaClient();
-
-async function main() {
-  console.log("🚀 Starting the seeding process...");
-
-  // ====================================================
-  // 1. CLEANUP EXISTING DATA
-  // ====================================================
-  console.log("🧹 Cleaning up the database...");
-  await prisma.wishlist.deleteMany();
-  await prisma.cart.deleteMany();
-  await prisma.customer_order_product.deleteMany();
-  await prisma.customer_order.deleteMany();
-  await prisma.image.deleteMany();
-  await prisma.product.deleteMany();
-  await prisma.category.deleteMany();
-  await prisma.address.deleteMany();
-  await prisma.user.deleteMany();
-  console.log("✅ Database cleaned.");
-
-  // ====================================================
-  // 2. SEED CATEGORIES
-  // ====================================================
-  console.log("🌱 Seeding categories...");
-  
-  const categoriesData = [
-    // --- Major Hardware ---
-    { name: "Laptops" },
-    { name: "Gaming PC Builds" },
-    { name: "Laptop Motherboards" },
-
-    // --- Wholesale Spare Parts ---
-    { name: "Laptop Screens" },
-    { name: "Laptop Keyboards" },
-    { name: "Laptop Batteries" },
-    { name: "Adapters & Chargers" },
-    { name: "Cooling Fans" },
-    { name: "DC Jacks & Connectors" },
-    { name: "Laptop Body Panels" }, 
-    { name: "Motherboard ICs & Components" }, 
-
-    // --- Services ---
-    { name: "Chip-Level Repair Service" },
-    { name: "MacBook & iPad Repair" },
-    { name: "Repair Training Course" },
-  ];
-
-  // Insert categories and fetch them back to get IDs
-  await prisma.category.createMany({ data: categoriesData });
-  const createdCategories = await prisma.category.findMany();
-  console.log(`✅ ${createdCategories.length} categories seeded.`);
-
-  // Helper to find category ID by name
-  const getCategoryId = (name) => {
-    const cat = createdCategories.find((c) => c.name === name);
-    return cat ? cat.id : createdCategories[0].id; // Fallback to first cat
-  };
-
-  // ====================================================
-  // 3. SEED USERS
-  // ====================================================
-  console.log("🌱 Seeding users...");
-  const rawUsers = [
-    { email: "admin@laptopsolutions.com", password: "Password@123", role: "admin", name: "Admin Ajay" },
-    { email: "user@example.com", password: "Password@123", role: "user", name: "Customer Rahul" },
-  ];
-
-  const createdUsers = [];
-  for (const userData of rawUsers) {
-    const hashedPassword = await bcrypt.hash(userData.password, 12);
-    const user = await prisma.user.create({
-      data: {
-        email: userData.email,
-        password: hashedPassword,
-        role: userData.role,
-        verified: true,
-        name: userData.name,
-        mobile: "9122901467"
-      },
-    });
-    createdUsers.push(user);
-    console.log(`✅ User seeded: ${user.email}`);
-  }
-
-  // ====================================================
-  // 4. SEED PRODUCTS
-  // ====================================================
-  console.log("🌱 Seeding products...");
+console.log("🌱 Seeding products...");
 
   const githubBase = "https://raw.githubusercontent.com/ajaykumarsaini231/Hariom-Shop/refs/heads/main/server/public/assest/";
 
@@ -104,10 +13,6 @@ async function main() {
 
   // List 3: Service images
   const serviceImages = ["laptopreparing.jpg", "screendamage.jpg", "laptops-repair-639676639.jpg"];
-
-// ==========================================
-// 1. MAJOR HARDWARE
-// ==========================================
 
 // Gaming PC Builds & High-Performance Parts (Processors, RAM, High-End SSDs)
 const gamingPcBuildsImages = [
@@ -839,11 +744,6 @@ const storageImages = [
 ];
 
 
-// ==========================================
-// 3. SERVICES (No specific images in the uploaded list directly mapped to 'service scenes', 
-// but using generic repair/component images for these placeholders is common)
-// ==========================================
-
 const chipLevelRepairImages = [
   "acer_aspire_7_a715_42g_laptop_motherboard.jpg", // Showing a motherboard implies chip level
   "asus_rog_strix_g531gt_core_i7_motherboard_60nr01l0_mb3110.jpg"
@@ -859,6 +759,102 @@ const trainingCourseImages = [
   "repair_training_placeholder.jpg" // You might need a specific image for this, or use a motherboard image
 ];
 
+
+
+
+
+
+
+const { PrismaClient } = require("@prisma/client");
+const { v4: uuidv4 } = require("uuid");
+const bcrypt = require("bcryptjs");
+
+const prisma = new PrismaClient();
+
+async function main() {
+  console.log("🚀 Starting the seeding process...");
+
+  // ====================================================
+  // 1. CLEANUP EXISTING DATA
+  // ====================================================
+  console.log("🧹 Cleaning up the database...");
+  await prisma.wishlist.deleteMany();
+  await prisma.cart.deleteMany();
+  await prisma.customer_order_product.deleteMany();
+  await prisma.customer_order.deleteMany();
+  await prisma.image.deleteMany();
+  await prisma.product.deleteMany();
+  await prisma.category.deleteMany();
+  await prisma.address.deleteMany();
+  await prisma.user.deleteMany();
+  console.log("✅ Database cleaned.");
+
+  // ====================================================
+  // 2. SEED CATEGORIES
+  // ====================================================
+  console.log("🌱 Seeding categories...");
+  
+  const categoriesData = [
+    // --- Major Hardware ---
+    { name: "Laptops" },
+    { name: "Gaming PC Builds" },
+    { name: "Laptop Motherboards" },
+
+    // --- Wholesale Spare Parts ---
+    { name: "Laptop Screens" },
+    { name: "Laptop Keyboards" },
+    { name: "Laptop Batteries" },
+    { name: "Adapters & Chargers" },
+    { name: "Cooling Fans" },
+    { name: "DC Jacks & Connectors" },
+    { name: "Laptop Body Panels" }, 
+    { name: "Motherboard ICs & Components" }, 
+
+    // --- Services ---
+    { name: "Chip-Level Repair Service" },
+    { name: "MacBook & iPad Repair" },
+    { name: "Repair Training Course" },
+  ];
+
+  // Insert categories and fetch them back to get IDs
+  await prisma.category.createMany({ data: categoriesData });
+  const createdCategories = await prisma.category.findMany();
+  console.log(`✅ ${createdCategories.length} categories seeded.`);
+
+  // Helper to find category ID by name
+  const getCategoryId = (name) => {
+    const cat = createdCategories.find((c) => c.name === name);
+    return cat ? cat.id : createdCategories[0].id; // Fallback to first cat
+  };
+
+  // ====================================================
+  // 3. SEED USERS
+  // ====================================================
+  console.log("🌱 Seeding users...");
+  const rawUsers = [
+    { email: "admin@laptopsolutions.com", password: "Password@123", role: "admin", name: "Admin Ajay" },
+    { email: "user@example.com", password: "Password@123", role: "user", name: "Customer Rahul" },
+  ];
+
+  const createdUsers = [];
+  for (const userData of rawUsers) {
+    const hashedPassword = await bcrypt.hash(userData.password, 12);
+    const user = await prisma.user.create({
+      data: {
+        email: userData.email,
+        password: hashedPassword,
+        role: userData.role,
+        verified: true,
+        name: userData.name,
+        mobile: "9122901467"
+      },
+    });
+    createdUsers.push(user);
+    console.log(`✅ User seeded: ${user.email}`);
+  }
+
+  
+  
   const productsToCreate = [
     // --- LAPTOPS ---
     {

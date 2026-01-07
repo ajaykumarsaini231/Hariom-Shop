@@ -7,6 +7,8 @@ const router = express.Router();
 const { adminIdentifier } = require("../middleware/adminIdentifier.js");
 
 router.post("/message", Messagevalidate(messageSchema), createMessage);
+// router.get("/messages", getMessages);
 router.get("/messages", adminIdentifier,getMessages);
+
 
 module.exports = router;

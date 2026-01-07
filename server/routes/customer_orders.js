@@ -11,11 +11,7 @@ const {
   getUserOrders
 } = require('../controllers/customer_orders');
 
-// ================================
-// 🧩 Route: All Orders (Admin)
-// ================================
-// Only admin can get all orders, but any authenticated user can create
-// router.use(identifier);
+router.use(identifier);
 
 router.route('/')
   .get( getAllOrders)      // ✅ protected with identifier
@@ -24,7 +20,7 @@ router.route('/')
 router.get('/user/:userId',  getUserOrders); // ✅ requires token
 
 router.route('/:id')
-  .get( getCustomerOrder)   // ✅ protected
+  .get( getCustomerOrder)   //  protected
   .put( updateCustomerOrder)
   .delete( deleteCustomerOrder);
 
