@@ -69,182 +69,86 @@ function buildSafeFilterObject(filterArray) {
   return filterObj;
 }
 
-const getAllProducts = asyncHandler(async (request, response) => {
-  const mode = request.query.mode || "";
-  
-  // checking if we are on the admin products page because we don't want to have filtering, sorting and pagination there
-  if(mode === "admin"){
-    const adminProducts = await prisma.product.findMany({});
-    return response.json(adminProducts);
-  } else {
-    const dividerLocation = request.url.indexOf("?");
-    let filterObj = {};
-    let sortObj = {};
-    let sortByValue = "defaultSort";
+const getAllProducts = asyncHandler(async (req, res) => {
+  const { mode, page = 1, limit, sort, filters } = req.query;
 
-    // getting current page with validation
-    const page = Number(request.query.page);
-    const validatedPage = (page && page > 0) ? page : 1;
-
-    if (dividerLocation !== -1) {
-      const queryArray = request.url
-        .substring(dividerLocation + 1, request.url.length)
-        .split("&");
-
-      let filterType;
-      let filterArray = [];
-
-      for (let i = 0; i < queryArray.length; i++) {
-        // Security: Use more robust parsing with validation
-        const queryParam = queryArray[i];
-        
-        // Extract filter type safely
-        if (queryParam.includes("filters")) {
-          if (queryParam.includes("price")) {
-            filterType = "price";
-          } else if (queryParam.includes("rating")) {
-            filterType = "rating";
-          } else if (queryParam.includes("category")) {
-            filterType = "category";
-          } else if (queryParam.includes("inStock")) {
-            filterType = "inStock";
-          } else if (queryParam.includes("outOfStock")) {
-            filterType = "outOfStock";
-          } else {
-            // Skip unknown filter types
-            continue;
-          }
-        }
-
-        if (queryParam.includes("sort")) {
-          // Security: Validate sort value
-          const extractedSortValue = queryParam.substring(queryParam.indexOf("=") + 1);
-          if (validateSortValue(extractedSortValue)) {
-            sortByValue = extractedSortValue;
-          }
-        }
-
-        // Security: Extract filter parameters safely
-        if (queryParam.includes("filters") && filterType) {
-          let filterValue;
-          
-          // Extract filter value based on type
-          if (filterType === "category") {
-            filterValue = queryParam.substring(queryParam.indexOf("=") + 1);
-          } else {
-            const numValue = parseInt(queryParam.substring(queryParam.indexOf("=") + 1));
-            filterValue = isNaN(numValue) ? null : numValue;
-          }
-
-          // Extract operator safely
-          const operatorStart = queryParam.indexOf("$") + 1;
-          const operatorEnd = queryParam.indexOf("=") - 1;
-          
-          if (operatorStart > 0 && operatorEnd > operatorStart) {
-            const filterOperator = queryParam.substring(operatorStart, operatorEnd);
-            
-            // Only add to filter array if all values are valid
-            if (filterValue !== null && filterOperator) {
-              filterArray.push({ 
-                filterType, 
-                filterOperator, 
-                filterValue 
-              });
-            }
-          }
-        }
-      }
-      
-      // Security: Build filter object using safe function
-      filterObj = buildSafeFilterObject(filterArray);
-    }
-
-    let whereClause = { ...filterObj };
-
-    // Security: Handle category filter separately with validation
-    if (filterObj.category && filterObj.category.equals) {
-      delete whereClause.category;
-    }
-
-    // Security: Build sort object safely
-    switch (sortByValue) {
-      case "defaultSort":
-        sortObj = {};
-        break;
-      case "titleAsc":
-        sortObj = { title: "asc" };
-        break;
-      case "titleDesc":
-        sortObj = { title: "desc" };
-        break;
-      case "lowPrice":
-        sortObj = { price: "asc" };
-        break;
-      case "highPrice":
-        sortObj = { price: "desc" };
-        break;
-      default:
-        sortObj = {};
-    }
-
-    let products;
-
-    if (Object.keys(filterObj).length === 0) {
-      products = await prisma.product.findMany({
-        skip: (validatedPage - 1) * 10,
-        take: 12,
-        include: {
-          category: {
-            select: {
-              name: true,
-            },
-          },
-        },
-        orderBy: sortObj,
-      });
-    } else {
-      // Security: Handle category filter with proper validation
-      if (filterObj.category && filterObj.category.equals) {
-        products = await prisma.product.findMany({
-          skip: (validatedPage - 1) * 10,
-          take: 12,
-          include: {
-            category: {
-              select: {
-                name: true,
-              },
-            },
-          },
-          where: {
-            ...whereClause,
-            category: {
-              name: {
-                equals: filterObj.category.equals,
-              },
-            },
-          },
-          orderBy: sortObj,
-        });
-      } else {
-        products = await prisma.product.findMany({
-          skip: (validatedPage - 1) * 10,
-          take: 12,
-          include: {
-            category: {
-              select: {
-                name: true,
-              },
-            },
-          },
-          where: whereClause,
-          orderBy: sortObj,
-        });
-      }
-    }
-
-    return response.json(products);
+  // ------------------ ADMIN MODE ------------------
+  if (mode === "admin") {
+    const products = await prisma.product.findMany({
+      include: { category: true },
+    });
+    return res.json(products);
   }
+
+  // ------------------ PAGINATION ------------------
+  const shouldPaginate = limit !== "all";
+  const take = shouldPaginate ? 12 : undefined;
+  const skip = shouldPaginate ? (Number(page) - 1) * 12 : undefined;
+
+  // ------------------ SORT LOGIC ------------------
+  let orderBy = {};
+  switch (sort) {
+    case "titleAsc":
+      orderBy = { title: "asc" };
+      break;
+    case "titleDesc":
+      orderBy = { title: "desc" };
+      break;
+    case "lowPrice":
+      orderBy = { price: "asc" };
+      break;
+    case "highPrice":
+      orderBy = { price: "desc" };
+      break;
+    default:
+      orderBy = {};
+  }
+
+  // ------------------ FILTER LOGIC ------------------
+  let where = {};
+
+  if (filters) {
+    if (filters.price) {
+      where.price = {};
+      if (filters.price.gte) where.price.gte = Number(filters.price.gte);
+      if (filters.price.lte) where.price.lte = Number(filters.price.lte);
+    }
+
+    if (filters.rating) {
+      where.rating = { gte: Number(filters.rating) };
+    }
+
+    if (filters.inStock) {
+      where.stock = { gt: 0 };
+    }
+
+    if (filters.outOfStock) {
+      where.stock = { equals: 0 };
+    }
+
+    if (filters.category) {
+      where.category = {
+        name: { equals: filters.category },
+      };
+    }
+  }
+
+  // ------------------ QUERY ------------------
+  const products = await prisma.product.findMany({
+    where,
+    orderBy,
+    skip,
+    take,
+    include: {
+      category: {
+        select: { name: true },
+      },
+    },
+  });
+
+  return res.json(products);
 });
+
 
 const getAllProductsOld = asyncHandler(async (request, response) => {
   const products = await prisma.product.findMany({
