@@ -1,8 +1,4 @@
-Here's a comprehensive, professional **README.md** file tailored for your freelance projects that you deliver to companies and organizations (sansthan). This template is versatile and can be adapted for any web development project.
 
-***
-
-markdown
 # 🚀 [Project Name] – Full-Stack Web Application
 
 > **Live Demo:** [https://your-project-domain.com](https://your-project-domain.com)
@@ -1506,3 +1502,4 @@ Please report bugs and issues via:
 ***
 
 Copy the entire content above and save it as `README.md` in your project root. Customize the placeholders like `[Project Name]`, `[Your Name]`, `[Company/Sansthan Name]`, URLs, and any specific features relevant to each project you deliver.
+
