@@ -102,3 +102,43 @@ export const getMessages = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const updateMessageStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isSolved } = req.body;
+
+    const updatedMessage = await prisma.message.update({
+      where: { id },
+      data: { isSolved },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `Query marked as ${isSolved ? "Solved" : "Unsolved"}`,
+      data: updatedMessage,
+    });
+  } catch (error) {
+    console.error("Error updating status:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// 👇 ADD: Delete Message
+export const deleteMessage = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await prisma.message.delete({
+      where: { id },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Message deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting message:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};

@@ -122,9 +122,10 @@ model Message {
   id        String   @id @default(uuid())
   name      String
   email     String
-  phone    String?
+  phone     String?
   subject   String?
   message   String
+  isSolved  Boolean  @default(false) // <-- Add this line
   createdAt DateTime @default(now())
 }
 
