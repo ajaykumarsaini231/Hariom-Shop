@@ -1493,7 +1493,7 @@ Please report bugs and issues via:
 ---
 
 <p align="center">
-  <strong>Built with ❤️ by [Your Name]</strong>
+  <strong>Built with ❤️ by [Ajay Kumar Saini]</strong>
   <br>
   <sub>© 2026 All Rights Reserved</sub>
 </p>
@@ -1501,5 +1501,4 @@ Please report bugs and issues via:
 
 ***
 
-Copy the entire content above and save it as `README.md` in your project root. Customize the placeholders like `[Project Name]`, `[Your Name]`, `[Company/Sansthan Name]`, URLs, and any specific features relevant to each project you deliver.
 
