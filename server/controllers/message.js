@@ -1,22 +1,17 @@
-import { PrismaClient } from "@prisma/client";
-
+import { prisma } from "../scripts/prisma.js";
 import nodemailer from "nodemailer";
-const prisma = new PrismaClient();
 
-const transport = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.NODE_CODE_SENDING_EMAIL_ADDRESS,
-    pass: process.env.NODE_CODE_SENDING_EMAIL_PASSWORD,
-  },
-});
-// Create new message
+import { transport } from "../middleware/sendmail.js";
+
 export const createMessage = async (req, res) => {
   try {
-    const { name, email, subject, message } = req.body;
+    const { name, email, phone, subject, message } = req.body;
+    // console.log(req.body)
 
     if (!name || !email || !message) {
-      return res.status(400).json({ error: "Name, Email, and Message are required" });
+      return res.status(400).json({
+        error: "Name, Email, and Message are required",
+      });
     }
 
     const newMessage = await prisma.message.create({
@@ -28,44 +23,62 @@ export const createMessage = async (req, res) => {
         message,
       },
     });
-      const mailOptions = {
+
+    await transport.sendMail({
       from: process.env.NODE_CODE_SENDING_EMAIL_ADDRESS,
-      to: "nabalsaini231@gmail.com", // Admin Email
-      subject: `New Message: ${subject || "No Subject"} - from ${name}`,
-      html: `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>New Message Received</title></head>
-        <body style="margin: 0; padding: 0; font-family: sans-serif; background-color: #f1f5f9; color: #334155;">
-          <div style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-            <div style="height: 6px; background: linear-gradient(to right, #4f46e5, #9333ea); width: 100%;"></div>
-            <div style="padding: 40px;">
-              <h1 style="color: #0f172a; margin-top: 0;">New Inquiry Received</h1>
-              <p style="font-size: 16px; color: #475569;">You have received a new message from the <strong>Contact Us</strong> form.</p>
-              
-              <div style="margin: 24px 0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; padding: 16px 0;">
-                <p style="margin: 8px 0;"><strong>Name:</strong> ${name}</p>
-                <p style="margin: 8px 0;"><strong>Email:</strong> <a href="mailto:${email}" style="color: #4f46e5; text-decoration: none;">${email}</a></p>
-                <p style="margin: 8px 0;"><strong>Phone:</strong> ${phone || "N/A"}</p>
-                <p style="margin: 8px 0;"><strong>Subject:</strong> ${subject || "N/A"}</p>
-              </div>
+      to: "nabalsaini231@gmail.com",
+  subject: `📩 New Inquiry: ${subject || "General Query"} - ${name}`,
+  html: `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f4f4f9; padding: 20px; border-radius: 10px;">
+      
+      <div style="background-color: #2563eb; padding: 15px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h2 style="color: white; margin: 0; font-size: 20px;">Laptop Solutions & Enterprises</h2>
+        <p style="color: #e0e7ff; margin: 5px 0 0; font-size: 14px;">New Customer Inquiry</p>
+      </div>
 
-              <p style="font-weight: bold; margin-bottom: 8px;">Message:</p>
-              <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
-                <p style="margin: 0; white-space: pre-wrap; color: #334155; line-height: 1.6;">${message}</p>
-              </div>
-            </div>
-            
-            <div style="background-color: #f8fafc; padding: 24px; text-align: center; border-top: 1px solid #e2e8f0;">
-              <p style="margin: 0; font-size: 14px; color: #64748b;">&copy; ${new Date().getFullYear()} Ajay Kumar Saini Admin Panel.</p>
-            </div>
+      <div style="background-color: white; padding: 20px; border-radius: 0 0 10px 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+        
+        <p style="font-size: 16px; color: #333;"><strong>Hello Admin,</strong></p>
+        <p style="color: #555;">You have received a new message from the website contact form.</p>
+
+        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+          <tr style="background-color: #f9fafb;">
+            <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold; color: #555; width: 120px;">Name:</td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee; color: #333;">${name}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold; color: #555;">Email:</td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee; color: #333;">
+              <a href="mailto:${email}" style="color: #2563eb; text-decoration: none;">${email}</a>
+            </td>
+          </tr>
+          <tr style="background-color: #f9fafb;">
+            <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold; color: #555;">Phone:</td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee; color: #333;">
+              <a href="tel:${phone}" style="color: #2563eb; text-decoration: none;">${phone || "N/A"}</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold; color: #555;">Subject/Issue:</td>
+            <td style="padding: 10px; border-bottom: 1px solid #eee; color: #333;">${subject || "General Inquiry"}</td>
+          </tr>
+        </table>
+
+        <div style="margin-top: 20px;">
+          <p style="font-weight: bold; color: #555; margin-bottom: 5px;">Customer Message:</p>
+          <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #2563eb; border-radius: 4px; color: #333; line-height: 1.5;">
+            ${message}
           </div>
-        </body>
-        </html>
-      `,
-    };
+        </div>
 
-    await transport.sendMail(mailOptions);
+        <div style="margin-top: 30px; text-align: center; font-size: 12px; color: #999; border-top: 1px solid #eee; padding-top: 15px;">
+          <p>This email was sent automatically from your website.</p>
+        </div>
+
+      </div>
+    </div>
+  `,
+    });
 
     return res.status(201).json({
       success: true,
@@ -78,7 +91,6 @@ export const createMessage = async (req, res) => {
   }
 };
 
-// Get all messages (for admin dashboard maybe)
 export const getMessages = async (req, res) => {
   try {
     const messages = await prisma.message.findMany({

@@ -1,10 +1,9 @@
-const express = require('express');
-const router = express.Router();
+import express from "express";
 
-const { identifier } = require("../middleware/indentifier.js");
-const { adminIdentifier } = require("../middleware/adminIdentifier.js");
+import { identifier } from "../middleware/identifier.js";
+import { adminIdentifier } from "../middleware/adminIdentifier.js";
 
-const {
+import {
   getUser,
   createUser,
   updateUser,
@@ -14,32 +13,29 @@ const {
   getCurrentUser,
   updateCurrentUser,
   deleteCurrentUser,
-} = require('../controllers/users');
+} from "../controllers/users.js";
 
-//  Public Routes
+const router = express.Router();
+
+/**
+ * 🟢 Public Routes
+ */
 router.post("/", createUser);
 router.get("/email/:email", getUserByEmail);
 
-// router.get("/me",  getCurrentUser);
-// router.put("/me/:id",  updateCurrentUser);
-// router.get("/me",  deleteCurrentUser);
-
-//  Authenticated User Routes
+/**
+ * 🔐 Authenticated User Routes
+ */
 router.get("/me", identifier, getCurrentUser);
 router.put("/me", identifier, updateCurrentUser);
 router.delete("/me", identifier, deleteCurrentUser);
 
-
-// router.get("/",  getAllUsers);
-// router.get("/me/:id",  getUser);
-// router.put("/me/:id",  updateUser);
-// router.delete("/me/:id",  deleteUser);
-
-
-// //  Admin Routes
+/**
+ * 🛡️ Admin Routes
+ */
 router.get("/", adminIdentifier, getAllUsers);
 router.get("/:id", adminIdentifier, getUser);
 router.put("/:id", adminIdentifier, updateUser);
 router.delete("/:id", adminIdentifier, deleteUser);
 
-module.exports = router;
+export default router;

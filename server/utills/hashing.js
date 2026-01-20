@@ -1,17 +1,17 @@
-const bcrypt = require('bcryptjs')
-const crypto = require("crypto")
+import bcrypt from 'bcryptjs'
+import crypto from "crypto"
 
-exports.doHash =  (value, saltValue) => {
+export const doHash =  (value, saltValue) => {
     const result=  bcrypt.hash(value, saltValue);
     return result
 };
 
-exports.dohashValidation= (value, HashedValue)=>{
+export const dohashValidation= (value, HashedValue)=>{
     const result = bcrypt.compare(value,HashedValue)
     return result
 }
 
-exports.hmacProcess = (value, key) => {
+export const hmacProcess = (value, key) => {
     return crypto.createHmac("sha256", key).update(value).digest("hex");
 };
 

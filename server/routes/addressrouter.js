@@ -1,11 +1,12 @@
-const express = require("express");
-const {
+import express from "express";
+import {
   getAddressesByUserId,
   createAddress,
   updateAddress,
   deleteAddress,
-} = require("../controllers/addressController.js");
-const { identifier } = require("../middleware/indentifier.js"); // 👈 Import middleware
+} from "../controllers/addressController.js";
+
+import { identifier } from "../middleware/identifier.js";
 
 const router = express.Router();
 
@@ -24,4 +25,4 @@ router.put("/:id", updateAddress);
 // 🗑️ Delete an address
 router.delete("/:id", deleteAddress);
 
-module.exports = router;
+export default router;

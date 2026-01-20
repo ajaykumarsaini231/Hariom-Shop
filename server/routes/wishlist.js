@@ -1,18 +1,29 @@
-const express = require("express");
+import express from "express";
 
-const router = express.Router();
-
-const {
+import {
   getAllWishlistByUserId,
   getAllWishlist,
   createWishItem,
   deleteWishItem,
-  getSingleProductFromWishlist
-} = require("../controllers/wishlist");
+  getSingleProductFromWishlist,
+} from "../controllers/wishlist.js";
 
-router.route("/").get(getAllWishlist).post(createWishItem);
+const router = express.Router();
 
-router.route("/:userId").get(getAllWishlistByUserId);
-router.route("/:userId/:productId").get(getSingleProductFromWishlist).delete(deleteWishItem);
+/**
+ * 🟢 Public / Admin Routes
+ */
+router.route("/")
+  .get(getAllWishlist)
+  .post(createWishItem);
 
-module.exports = router;
+/**
+ * 🧑 User-specific Wishlist
+ */
+router.get("/:userId", getAllWishlistByUserId);
+
+router.route("/:userId/:productId")
+  .get(getSingleProductFromWishlist)
+  .delete(deleteWishItem);
+
+export default router;

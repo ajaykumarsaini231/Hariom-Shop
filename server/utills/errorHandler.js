@@ -141,7 +141,7 @@ const asyncHandler = (fn) => {
   };
 };
 
-module.exports = {
+export {
   AppError,
   logError,
   handlePrismaError,

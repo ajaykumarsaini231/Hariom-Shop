@@ -1,5 +1,5 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = require("../utills/db"); // ✅ Use shared connection
+// const prisma = require("../utills/db"); // ✅ Use shared connection
+import { prisma } from "../scripts/prisma.js";
 
 async function uploadMainImage(req, res) {
     if (!req.files || Object.keys(req.files).length === 0) {
@@ -19,6 +19,6 @@ async function uploadMainImage(req, res) {
     });
   }
 
-  module.exports = {
+  export {
     uploadMainImage
 };

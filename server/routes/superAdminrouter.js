@@ -1,34 +1,53 @@
-// routes/superAdminRouter.js
-const express = require("express");
-const { adminIdentifier } = require("../middleware/adminIdentifier.js");
-const { getAdminStats, getRecentOrders } = require("../controllers/adminStats");
-const {
-  getUser, updateUser, deleteUser, getAllUsers,
-} = require("../controllers/users");
-const {
-  createProduct, updateProduct, deleteProduct,
-} = require("../controllers/products");
-const {
-  createImage, updateImage, deleteImage,
-} = require("../controllers/productImages");
-const {
-  getAllOrders, updateCustomerOrder, deleteCustomerOrder,
-} = require("../controllers/customer_orders");
-const { getMessages } = require("../controllers/message.js");
-const { getAllWishlist } = require("../controllers/wishlist");
+import express from "express";
+
+import { adminIdentifier } from "../middleware/adminIdentifier.js";
+
+import { getAdminStats, getRecentOrders } from "../controllers/adminStats.js";
+
+import {
+  getUser,
+  updateUser,
+  deleteUser,
+  getAllUsers,
+} from "../controllers/users.js";
+
+import {
+  createProduct,
+  updateProduct,
+  deleteProduct,
+} from "../controllers/products.js";
+
+import {
+  createImage,
+  updateImage,
+  deleteImage,
+} from "../controllers/productImages.js";
+
+import {
+  getAllOrders,
+  updateCustomerOrder,
+  deleteCustomerOrder,
+} from "../controllers/customer_orders.js";
+
+import { getMessages } from "../controllers/message.js";
+import { getAllWishlist } from "../controllers/wishlist.js";
 
 const router = express.Router();
 
 // ✅ Protect all admin routes
 router.use(adminIdentifier);
 
-// 📊 Admin Dashboard Stats
+// 📊 Admin Dashboard
 router.get("/stats", getAdminStats);
 router.get("/recent-orders", getRecentOrders);
 
 // 👥 Users
 router.get("/users", getAllUsers);
-router.route("/users/:id").get(getUser).put(updateUser).delete(deleteUser);
+router
+  .route("/users/:id")
+  .get(getUser)
+  .put(updateUser)
+  .delete(deleteUser);
 
 // 📦 Products
 router.post("/products", createProduct);
@@ -42,7 +61,10 @@ router.delete("/product-images/:id", deleteImage);
 
 // 🛒 Orders
 router.get("/orders", getAllOrders);
-router.route("/orders/:id").put(updateCustomerOrder).delete(deleteCustomerOrder);
+router
+  .route("/orders/:id")
+  .put(updateCustomerOrder)
+  .delete(deleteCustomerOrder);
 
 // 💬 Messages
 router.get("/messages", getMessages);
@@ -50,4 +72,4 @@ router.get("/messages", getMessages);
 // 💖 Wishlist
 router.get("/wishlist", getAllWishlist);
 
-module.exports = router;
+export default router;

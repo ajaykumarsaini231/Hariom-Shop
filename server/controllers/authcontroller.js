@@ -1,22 +1,22 @@
-const jwt = require("jsonwebtoken");
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+import jwt from "jsonwebtoken"
+import { prisma } from "../scripts/prisma.js";
 
-const {
+
+import {
   signupSchema,
   signinSchema,
   acceptCodeSchema,
   passwordSchema,
   acceptforgotCodeSchema,
-} = require("../middleware/validator");
+} from "../middleware/validator.js"
 
-const { doHash, dohashValidation, hmacProcess } = require("../utills/hashing");
-const { transport } = require("../middleware/sendmail");
-
-// =============== SIGNUP ===============
+import { doHash, dohashValidation, hmacProcess } from "../utills/hashing.js"
+import { transport } from "../middleware/sendmail.js"
 
 // =============== SIGNUP ===============
-exports.signup = async (req, res) => {
+
+// =============== SIGNUP ===============
+export const signup = async (req, res) => {
   const { name, email, password, mobile } = req.body;
 
   try {
@@ -115,7 +115,7 @@ exports.signup = async (req, res) => {
 };
 
 // =============== VERIFY OTP ===============
-exports.verifyOtp = async (req, res) => {
+export const verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
 
   try {
@@ -229,7 +229,7 @@ exports.verifyOtp = async (req, res) => {
 
 
 // =============== RESEND SIGNUP OTP ===============
-exports.resendSignupOtp = async (req, res) => {
+export const resendSignupOtp = async (req, res) => {
   const { email } = req.body;
 
   try {
@@ -357,7 +357,7 @@ html: `
 
 
 // =============== SIGNIN ===============
-exports.signin = async (req, res) => {
+export const signin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -417,7 +417,7 @@ exports.signin = async (req, res) => {
 };
 
 // =============== SIGNOUT ===============
-exports.signout = async (req, res) => {
+export const signout = async (req, res) => {
   try {
     return res
       .cookie("Authorization")
@@ -429,7 +429,7 @@ exports.signout = async (req, res) => {
 };
 
 // =============== SEND VERIFICATION CODE (Resend) ===============
-exports.sendVarificationcode = async (req, res) => {
+export const sendVarificationcode = async (req, res) => {
   const { email } = req.body;
   try {
     const existinguser = await prisma.user.findUnique({ where: { email } });
@@ -477,7 +477,7 @@ exports.sendVarificationcode = async (req, res) => {
 };
 
 // =============== VERIFY RESENT CODE ===============
-exports.varifyVarificationCode = async (req, res) => {
+export const varifyVarificationCode = async (req, res) => {
   const { email, varificationCode } = req.body;
   if (!email || !varificationCode)
     return res.json({ message: "Kindly add email and varificationCode" });
@@ -533,7 +533,7 @@ exports.varifyVarificationCode = async (req, res) => {
 };
 
 // =============== CHANGE PASSWORD ===============
-exports.ChangePassword = async (req, res) => {
+export const ChangePassword = async (req, res) => {
   const { userId } = req.user;
   const { oldpassword, newpassword } = req.body;
 
@@ -569,7 +569,7 @@ exports.ChangePassword = async (req, res) => {
 };
 
 // =============== FORGOT PASSWORD SEND CODE ===============
-exports.sendforgetcode = async (req, res) => {
+export const sendforgetcode = async (req, res) => {
   const { email } = req.body;
   try {
     const user = await prisma.user.findUnique({ where: { email } });
@@ -613,7 +613,7 @@ exports.sendforgetcode = async (req, res) => {
 };
 
 // =============== VERIFY FORGOT PASSWORD + RESET ===============
-exports.varifyforgotCode = async (req, res) => {
+export const varifyforgotCode = async (req, res) => {
   const { email, varificationCode, newpassword } = req.body;
 
   try {
@@ -670,7 +670,7 @@ exports.varifyforgotCode = async (req, res) => {
 };
 
 // =============== UPLOAD PHOTO ===============
-exports.uploadPhoto = async (req, res) => {
+export const uploadPhoto = async (req, res) => {
   try {
     const userId = req.user.userId;
     if (!req.file)
@@ -701,7 +701,7 @@ exports.uploadPhoto = async (req, res) => {
   }
 };
 
-exports.updateProfile = async (req, res) => {
+export const updateProfile = async (req, res) => {
   try {
     const { userId } = req.user;
     const { name } = req.body;
@@ -726,7 +726,7 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-exports.verify = async (req, res) => {
+export const verify = async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader)

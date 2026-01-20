@@ -1,41 +1,30 @@
-const express = require('express');
-const router = express.Router();
-const { identifier } = require("../middleware/indentifier.js"); // 👈 Auth middleware
-const { adminIdentifier } = require("../middleware/adminIdentifier.js");
+import express from "express";
 
-const {
+import {
   getSingleProductImages,
   createImage,
   updateImage,
-  deleteImage
-} = require('../controllers/productImages');
+  deleteImage,
+} from "../controllers/productImages.js";
+
+import { adminIdentifier } from "../middleware/adminIdentifier.js";
+
+const router = express.Router();
 
 // ================================
-// 🧩 Route: Product Images
+// 🧩 Product Images Routes
 // ================================
 
-// // Get all images for a product
-router.get('/:id', getSingleProductImages);
+// 📸 Get all images for a product (public)
+router.get("/:id", getSingleProductImages);
 
-// Create new product image (secured)
-router.post('/', adminIdentifier, createImage);
+// ➕ Create product image (admin only)
+router.post("/", adminIdentifier, createImage);
 
-// Update image (secured)
-router.put('/:id', adminIdentifier, updateImage);
+// ✏️ Update product images (admin only)
+router.put("/:id", adminIdentifier, updateImage);
 
-// Delete image (secured)
-router.delete('/:id', adminIdentifier, deleteImage);
+// 🗑️ Delete product images (admin only)
+router.delete("/:id", adminIdentifier, deleteImage);
 
-// // Get all images for a product
-// router.get('/:id', getSingleProductImages);
-
-// // Create new product image (secured)
-// router.post('/',  createImage);
-
-// // Update image (secured)
-// router.put('/:id', updateImage);
-
-// // Delete image (secured)
-// router.delete('/:id', deleteImage);
-
-module.exports = router;
+export default router;

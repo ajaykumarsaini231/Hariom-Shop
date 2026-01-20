@@ -1,6 +1,6 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
-const { asyncHandler, AppError } = require("../utills/errorHandler");
+import { prisma } from "../scripts/prisma.js";
+
+import { asyncHandler, AppError } from "../utills/errorHandler.js";
 
 const createCategory = asyncHandler(async (request, response) => {
   const { name } = request.body;
@@ -117,7 +117,7 @@ const getAllCategories = asyncHandler(async (request, response) => {
   return response.json(categories);
 });
 
-module.exports = {
+export {
   createCategory,
   updateCategory,
   deleteCategory,

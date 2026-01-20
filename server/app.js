@@ -1,36 +1,39 @@
-const express = require("express");
-const bcrypt = require('bcryptjs');
-const fileUpload = require("express-fileupload");
-const productsRouter = require("./routes/products");
-const productImagesRouter = require("./routes/productImages");
-const categoryRouter = require("./routes/category");
-const searchRouter = require("./routes/search");
-const mainImageRouter = require("./routes/mainImages");
-const userRouter = require("./routes/users");
-const orderRouter = require("./routes/customer_orders");
-const slugRouter = require("./routes/slugs");
-const orderProductRouter = require('./routes/customer_order_product');
-const wishlistRouter = require('./routes/wishlist');
-const authRouter = require("./routes/authrouter")
-var cors = require("cors");
-const path = require("path");
-const cartRouter= require("./routes/cartRoute")
-const messageroutre = require('./routes/messageroute')
-const newsletter = require('./controllers/newsletter')
-const addressRouter = require('./routes/addressrouter')
-const superAdminRouter = require("./routes/superAdminrouter");
+import express from "express";
+import bcrypt from "bcryptjs";
+import fileUpload from "express-fileupload";
+import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+import messageroutre from "./routes/messageroute.js"
+/* ---------- ROUTES ---------- */
+import productsRouter from "./routes/products.js";
+import productImagesRouter from "./routes/productImages.js";
+import categoryRouter from "./routes/category.js";
+import searchRouter from "./routes/search.js";
+import mainImageRouter from "./routes/mainImages.js";
+import userRouter from "./routes/users.js";
+import orderRouter from "./routes/customer_orders.js";
+import slugRouter from "./routes/slugs.js";
+import orderProductRouter from "./routes/customer_order_product.js";
+import wishlistRouter from "./routes/wishlist.js";
+import authRouter from "./routes/authrouter.js";
+import cartRouter from "./routes/cartRoute.js";
+import messageRouter from "./routes/messageroute.js";
+import addressRouter from "./routes/addressrouter.js";
+import superAdminRouter from "./routes/superAdminrouter.js";
 
-// Serve static files from the "assets" folder
-// Import logging middleware
-const { 
-  addRequestId, 
-  requestLogger, 
-  errorLogger, 
-  securityLogger 
-} = require('./middleware/requestLogger');
+/* ---------- CONTROLLERS ---------- */
+import newsletter from "./controllers/newsletter.js";
 
-// Import rate limiting middleware
-const {
+/* ---------- MIDDLEWARE ---------- */
+import {
+  addRequestId,
+  requestLogger,
+  errorLogger,
+  securityLogger
+} from "./middleware/requestLogger.js";
+
+import {
   generalLimiter,
   authLimiter,
   registerLimiter,
@@ -38,18 +41,22 @@ const {
   uploadLimiter,
   searchLimiter,
   orderLimiter
-} = require('./middleware/rateLimiter');
+} from "./middleware/rateLimiter.js";
 
-const {
+import {
   passwordResetLimiter,
   adminLimiter,
   wishlistLimiter,
   productLimiter
-} = require('./middleware/advancedRateLimiter');
+} from "./middleware/advancedRateLimiter.js";
 
-const {
-  handleServerError
-} = require('./utills/errorHandler');
+import { handleServerError } from "./utills/errorHandler.js";
+
+// import path from "path";
+// import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -134,7 +141,7 @@ app.use('/api/order-product', orderProductRouter);
 app.use("/api/slugs", slugRouter);
 app.use("/api/wishlist", wishlistRouter);
 app.use("/api/auth",authRouter)
-app.use("/api/quary-messages/",messageroutre);
+app.use("/api/quary-messages",messageroutre);
 app.use("/api/news-letter/", newsletter);
 app.use("/api/user/addresses", addressRouter);
 app.use("/api/admin", superAdminRouter);

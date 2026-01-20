@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import { prisma } from "../scripts/prisma.js";
+
 
 export const getAddressesByUserId = async (req, res) => {
   try {

@@ -1,8 +1,7 @@
-const jwt = require("jsonwebtoken");
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+import  jwt from "jsonwebtoken"
+import { prisma } from "../scripts/prisma.js";
 
-exports.adminIdentifier = async (req, res, next) => {
+export const adminIdentifier = async (req, res, next) => {
   try {
     let token;
 

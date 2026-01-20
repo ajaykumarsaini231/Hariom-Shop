@@ -1,7 +1,7 @@
-const prisma = require("../utills/db");
-const bcrypt = require("bcryptjs");
-const { asyncHandler, AppError } = require("../utills/errorHandler");
-const jwt = require("jsonwebtoken");
+import { prisma } from "../scripts/prisma.js";
+import bcrypt  from "bcryptjs"
+import { asyncHandler, AppError } from "../utills/errorHandler.js";
+import jwt from "jsonwebtoken"
 
 function excludePassword(user) {
   if (!user) return user;
@@ -324,10 +324,7 @@ const deleteCurrentUser = async (req, res) => {
     return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
-
-
-
-module.exports = {
+export{
   getCurrentUser,
   updateCurrentUser,
   createUser,

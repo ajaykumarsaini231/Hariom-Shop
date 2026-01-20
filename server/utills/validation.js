@@ -1,6 +1,6 @@
 // Server-side validation utilities for payment and order processing
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+import { prisma } from "../scripts/prisma.js";
+
 
 // Validation error class
 class ValidationError extends Error {
@@ -420,7 +420,7 @@ const validatePaymentData = (paymentData) => {
   };
 };
 
-module.exports = {
+export {
   ValidationError,
   paymentValidation,
   orderValidation,

@@ -1,14 +1,24 @@
-const { createMessage, getMessages } = require("../controllers/message.js");
-const Messagevalidate = require("../middleware/messageValidator.js");
-const { messageSchema } = require("../middleware/validator.js");
+import express from "express";
 
-const express = require("express");
+import { createMessage, getMessages } from "../controllers/message.js";
+import Messagevalidate from "../middleware/messageValidator.js";
+import { messageSchema } from "../middleware/validator.js";
+import { adminIdentifier } from "../middleware/adminIdentifier.js";
+
 const router = express.Router();
-const { adminIdentifier } = require("../middleware/adminIdentifier.js");
 
-router.post("/message", Messagevalidate(messageSchema), createMessage);
-// router.get("/messages", getMessages);
-router.get("/messages", adminIdentifier,getMessages);
+// 📩 Create new message (public)
+router.post(
+  "/messages",
+  Messagevalidate(messageSchema),
+  createMessage
+);
 
+// 📬 Get all messages (admin only)
+router.get(
+  "/messages",
+  adminIdentifier,
+  getMessages
+);
 
-module.exports = router;
+export default router;

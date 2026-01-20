@@ -1,5 +1,5 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+import { prisma } from "../scripts/prisma.js";
+
 
 // Get all images for a specific product
 async function getSingleProductImages(request, response) {
@@ -139,7 +139,7 @@ async function deleteImage(request, response) {
   }
 }
 
-module.exports = {
+export {
   getSingleProductImages,
   createImage,
   updateImage,

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Laptop Shop Backend",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "build": "prisma generate",
     "start": "node app.js",

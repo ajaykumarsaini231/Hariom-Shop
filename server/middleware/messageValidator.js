@@ -13,4 +13,4 @@ const Messagevalidate = (schema) => {
   };
 };
 
-module.exports = Messagevalidate;
+export default Messagevalidate;

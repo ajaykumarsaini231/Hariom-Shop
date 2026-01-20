@@ -1,27 +1,32 @@
-const express = require('express');
-const router = express.Router();
-const { identifier } = require("../middleware/indentifier.js"); // 👈 Import middleware
+import express from "express";
+import { identifier } from "../middleware/identifier.js";
 
-const {
+import {
   getCustomerOrder,
   createCustomerOrder,
   updateCustomerOrder,
   deleteCustomerOrder,
   getAllOrders,
-  getUserOrders
-} = require('../controllers/customer_orders');
+  getUserOrders,
+} from "../controllers/customer_orders.js";
 
+const router = express.Router();
+
+// 🔒 Protect all routes
 router.use(identifier);
 
-router.route('/')
-  .get( getAllOrders)      // ✅ protected with identifier
-  .post( createCustomerOrder); // ✅ only logged-in users can create
+// 📦 Get all orders / Create order
+router.route("/")
+  .get(getAllOrders)
+  .post(createCustomerOrder);
 
-router.get('/user/:userId',  getUserOrders); // ✅ requires token
+// 👤 Get orders by user
+router.get("/user/:userId", getUserOrders);
 
-router.route('/:id')
-  .get( getCustomerOrder)   //  protected
-  .put( updateCustomerOrder)
-  .delete( deleteCustomerOrder);
+// 📄 Single order operations
+router.route("/:id")
+  .get(getCustomerOrder)
+  .put(updateCustomerOrder)
+  .delete(deleteCustomerOrder);
 
-module.exports = router;
+export default router;

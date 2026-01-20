@@ -1,6 +1,6 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
-const { validateOrderData, ValidationError } = require('../utills/validation');
+import { prisma } from "../scripts/prisma.js";
+
+import { validateOrderData, ValidationError } from '../utills/validation.js'
 
 async function createCustomerOrder(request, response) {
   try {
@@ -383,7 +383,7 @@ async function getUserOrders(request, response) {
   }
 }
 
-module.exports = {
+export {
   createCustomerOrder,
   updateCustomerOrder,
   deleteCustomerOrder,

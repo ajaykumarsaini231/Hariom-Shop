@@ -1,5 +1,5 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+import { prisma } from "../scripts/prisma.js";
+
 
 // 🛒 Add to Cart
 const addToCart = async (req, res) => {
@@ -104,7 +104,7 @@ const clearCart = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   addToCart,
   getUserCart,
   updateCartItem,

@@ -1,8 +1,12 @@
-const morgan = require('morgan');
-const fs = require('fs');
-const path = require('path');
+import morgan from 'morgan';
+import fs  from 'fs';
+import path  from 'path';
+import { fileURLToPath } from "url";
 
 const isVercel = !!process.env.VERCEL;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Create logs directory only if not on Vercel
 let logsDir;
@@ -86,7 +90,7 @@ const securityLogger = (req, res, next) => {
   next();
 };
 
-module.exports = {
+export {
   addRequestId,
   requestLogger,
   errorLogger,

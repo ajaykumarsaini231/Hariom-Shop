@@ -1,6 +1,6 @@
-const jwt = require("jsonwebtoken");
+import  jwt  from "jsonwebtoken";
 
-exports.identifier = (req, res, next) => {
+export const identifier = (req, res, next) => {
   try {
     let token;
 

@@ -1,7 +1,7 @@
-const jwt = require("jsonwebtoken");
-const { AppError } = require("../utills/errorHandler");
+import  jwt from "jsonwebtoken"
+import { AppError } from "../utills/errorHandler"
 
-exports.protect = (req, res, next) => {
+export const protect = (req, res, next) => {
   let token;
 
   if (

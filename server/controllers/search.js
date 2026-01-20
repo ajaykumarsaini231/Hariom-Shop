@@ -1,5 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+import { prisma } from "../scripts/prisma.js";
+
 
 async function searchProducts(request, response) {
     try {
@@ -32,4 +32,4 @@ async function searchProducts(request, response) {
     }
 }
 
-module.exports = { searchProducts };
+export { searchProducts };

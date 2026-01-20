@@ -1,9 +1,8 @@
-const express = require("express");
-const { PrismaClient } = require("@prisma/client");
+import express from "express"
+import { prisma } from "../scripts/prisma.js";
 
-const prisma = new PrismaClient();
 const router = express.Router();
-const { adminIdentifier } = require("../middleware/adminIdentifier.js");
+import { adminIdentifier } from "../middleware/adminIdentifier.js"
 
 // 📩 Subscribe
 router.post("/", async (req, res) => {
@@ -44,4 +43,4 @@ router.get("/", adminIdentifier,  async (req, res) => {
   }
 });
 
-module.exports = router;  // ✅ CommonJS export
+export default router;

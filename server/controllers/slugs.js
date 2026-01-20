@@ -1,4 +1,4 @@
-const prisma = require("../utills/db"); // ✅ Use shared connection
+import { prisma } from "../scripts/prisma.js";
 
 async function getProductBySlug(request, response) {
   const { slug } = request.params;
@@ -18,4 +18,4 @@ async function getProductBySlug(request, response) {
   return response.status(200).json(foundProduct);
 }
 
-module.exports = { getProductBySlug };
+export{ getProductBySlug };

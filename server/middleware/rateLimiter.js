@@ -1,4 +1,4 @@
-const rateLimit = require('express-rate-limit');
+import  rateLimit  from 'express-rate-limit';
 
 // General API rate limiter - applies to all API routes
 const generalLimiter = rateLimit({
@@ -127,7 +127,7 @@ const orderLimiter = rateLimit({
   }
 });
 
-module.exports = {
+export{
   generalLimiter,
   authLimiter,
   registerLimiter,

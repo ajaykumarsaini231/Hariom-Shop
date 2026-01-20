@@ -1,12 +1,13 @@
-const express = require("express");
-const {
+import express from "express";
+import {
   createOrderProduct,
   updateProductOrder,
   deleteProductOrder,
   getProductOrder,
   getAllProductOrders,
-} = require("../controllers/customer_order_product");
-const { identifier } = require("../middleware/indentifier.js"); // 👈 Import middleware
+} from "../controllers/customer_order_product.js";
+
+import { identifier } from "../middleware/identifier.js";
 
 const router = express.Router();
 
@@ -19,14 +20,8 @@ router.get("/:id", getProductOrder);
 /**
  * 🔒 Protected Routes — require JWT
  */
-
-// router.post("/", createOrderProduct);
-// router.put("/:id",  updateProductOrder);
-// router.delete("/:id", deleteProductOrder);
-
-
 router.post("/", identifier, createOrderProduct);
 router.put("/:id", identifier, updateProductOrder);
 router.delete("/:id", identifier, deleteProductOrder);
 
-module.exports = router;
+export default router;

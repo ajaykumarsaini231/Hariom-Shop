@@ -1,4 +1,4 @@
-const rateLimit = require('express-rate-limit');
+import  rateLimit from 'express-rate-limit'
 
 // Rate limiter for password reset attempts
 const passwordResetLimiter = rateLimit({
@@ -92,7 +92,7 @@ const createDynamicLimiter = (windowMs, max, message) => {
   });
 };
 
-module.exports = {
+export {
   passwordResetLimiter,
   adminLimiter,
   wishlistLimiter,

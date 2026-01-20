@@ -1,7 +1,7 @@
-const Joi = require('joi');
-const { post } = require('../routes/authrouter');
+import Joi from 'joi';
+// const { post } = require('../routes/authrouter');
 
-exports.signupSchema = Joi.object({
+export const signupSchema = Joi.object({
     name:Joi.string()
     .required(),
 
@@ -23,7 +23,7 @@ exports.signupSchema = Joi.object({
 
 
 
-exports.signinSchema = Joi.object({
+export const signinSchema = Joi.object({
     email: Joi.string()
         .min(6)
         .max(60)
@@ -36,7 +36,7 @@ exports.signinSchema = Joi.object({
         
 });
 
-exports.acceptCodeSchema = Joi.object({
+export const acceptCodeSchema = Joi.object({
     email: Joi.string()
         .min(6)
         .max(60)
@@ -48,7 +48,7 @@ exports.acceptCodeSchema = Joi.object({
                 
 });
 
-exports.passwordSchema = Joi.object({
+export const passwordSchema = Joi.object({
     oldpassword: Joi.string()
         .required()
         .pattern(new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$")),
@@ -59,7 +59,7 @@ exports.passwordSchema = Joi.object({
         
 });
 
-exports.acceptforgotCodeSchema = Joi.object({
+export const acceptforgotCodeSchema = Joi.object({
     email: Joi.string()
         .min(6)
         .max(60)
@@ -78,20 +78,34 @@ exports.acceptforgotCodeSchema = Joi.object({
 
 
 
-exports.postValidatort = Joi.object({
+export const postValidatort = Joi.object({
     title:Joi.string().min(6).max(600).required(),
     description:Joi.string().min(6).required(),
     userId:Joi.string().required()
     
 })
 
-exports.messageSchema = Joi.object({
+
+export const messageSchema = Joi.object({
     name: Joi.string().min(2).max(100).required(),
+    
+    // Updated Email: Removed strict TLD list to allow all valid emails (.org, .co.in, etc.)
     email: Joi.string()
         .min(6)
-        .max(60)
+        .max(100)
         .required()
-        .email({ tlds: { allow: ['com', 'net', 'in'] } }),
+        .email(),
+
+    // Phone: Optional & Flexible
+    // Allows: "+91 9999999999", "9999999999", or just a number
+    phone: Joi.string()
+        .min(10)      // Minimum length for a valid number
+        .max(20)      // Max length to accommodate country codes and spaces
+        .pattern(/^[0-9+\- ]+$/) // Regex allows digits (0-9), plus (+), hyphen (-), and space
+        .optional()
+        .allow('', null), // Allows empty string or null so it doesn't error if skipped
+
     subject: Joi.string().min(3).max(200).required(),
-    message: Joi.string().min(6).max(1000).required(),
+    
+    message: Joi.string().min(2).max(2000).required(),
 });

@@ -1,6 +1,6 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
-const { asyncHandler, AppError } = require("../utills/errorHandler");
+import { prisma } from "../scripts/prisma.js";
+
+import { asyncHandler, AppError } from "../utills/errorHandler.js";
 
 const getAllWishlist = asyncHandler(async (request, response) => {
   const wishlist = await prisma.wishlist.findMany({
@@ -133,7 +133,7 @@ const deleteAllWishItemByUserId = asyncHandler(async (request, response) => {
   return response.status(204).send();
 });
 
-module.exports = {
+export {
   getAllWishlistByUserId,
   getAllWishlist,
   createWishItem,

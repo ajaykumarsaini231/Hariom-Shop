@@ -1,9 +1,9 @@
-const express = require("express");
+import express from "express";
+import { getProductBySlug } from "../controllers/slugs.js";
 
 const router = express.Router();
 
-const { getProductBySlug } = require("../controllers/slugs");
+// 🔗 Get product by slug
+router.get("/:slug", getProductBySlug);
 
-router.route("/:slug").get(getProductBySlug);
-
-module.exports = router;
+export default router;

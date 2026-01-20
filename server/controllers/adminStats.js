@@ -1,8 +1,8 @@
 // controllers/adminStats.js
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+import { prisma } from "../scripts/prisma.js";
 
-exports.getAdminStats = async (req, res) => {
+
+export const getAdminStats = async (req, res) => {
   try {
     // Count total records from relevant tables
     const [users, products, categories, orders] = await Promise.all([
@@ -27,7 +27,7 @@ exports.getAdminStats = async (req, res) => {
   }
 };
 
-exports.getRecentOrders = async (req, res) => {
+export const getRecentOrders = async (req, res) => {
   try {
     const { sort = "desc", days = 2 } = req.query;
 

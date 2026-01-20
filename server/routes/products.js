@@ -1,5 +1,6 @@
-const express = require("express");
-const {
+import express from "express";
+
+import {
   getAllProducts,
   createProduct,
   updateProduct,
@@ -10,11 +11,9 @@ const {
   getProductList,
   moveProductsToCategory,
   getProductsSplitByCategory,
-} = require("../controllers/products");
+} from "../controllers/products.js";
 
-// ✅ Middleware imports
-const { identifier } = require("../middleware/indentifier.js");
-const { adminIdentifier } = require("../middleware/adminIdentifier.js");
+import { adminIdentifier } from "../middleware/adminIdentifier.js";
 
 const router = express.Router();
 
@@ -26,20 +25,14 @@ router.get("/", getAllProducts);
 router.get("/search", searchProducts);
 router.get("/category/:categoryId", getProductsByCategoryId);
 router.get("/:id", getProductById);
+router.get("/split/:categoryId", getProductsSplitByCategory);
 
 /**
- * 🔒 Protected Admin Routes — only admins can create, update, or delete
-//  */
-router.put("/move-products", adminIdentifier, moveProductsToCategory); // ✅ plural match
+ * 🔒 Admin Routes — admin only
+ */
+router.put("/move-products", adminIdentifier, moveProductsToCategory);
 router.post("/", adminIdentifier, createProduct);
 router.put("/:id", adminIdentifier, updateProduct);
 router.delete("/:id", adminIdentifier, deleteProduct);
-router.get("/split/:categoryId",  getProductsSplitByCategory);
 
-// router.put("/move-products", moveProductsToCategory); // ✅ plural match
-// router.post("/", createProduct);
-// router.put("/:id", updateProduct);
-// router.delete("/:id", deleteProduct);
-// router.get("/split/:categoryId",  getProductsSplitByCategory);
-
-module.exports = router;
+export default router;

@@ -1,7 +1,9 @@
-const express = require("express");
+import express from "express";
+import { uploadMainImage } from "../controllers/mainImages.js";
+
 const router = express.Router();
-const { uploadMainImage } = require("../controllers/mainImages");
 
-router.route("/").post(uploadMainImage);
+// 📸 Upload main image
+router.post("/", uploadMainImage);
 
-module.exports = router;
+export default router;
